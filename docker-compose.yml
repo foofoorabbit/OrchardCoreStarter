@@ -1,0 +1,40 @@
+version: "2.4"
+services:
+  website:
+    image: microsoft/dotnet:2.2-sdk
+    working_dir: /app
+    environment:
+      OrchardCore__ConnectionString: "User ID=ocstarter;Password=ocstarter;Host=postgres;Port=5432;Database=ocstarter;"
+      OrchardCore__DatabaseProvider: Postgres
+    volumes:
+      # Uncomment to use your local cache (tested on linux)
+      # - ~/.nuget/packages:/root/.nuget/packages/
+      - .:/app
+      - orchardcore-starter-appdata:/app/Web/App_Data
+    ports:
+      - 5000:5000
+      - 5001:5001
+    command: /bin/bash -c 'cd Web && dotnet build && dotnet watch run'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:10.5-alpine
+    user: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ocstarter
+      POSTGRES_PASSWORD: ocstarter
+      POSTGRES_DB: ocstarter
+    volumes:
+      - orchardcore-starter-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "--dbname=ocstarter", "--username=ocstarter"]
+      interval: 1s
+      timeout: 60s
+
+volumes:
+  orchardcore-starter-postgres:
+  orchardcore-starter-appdata:

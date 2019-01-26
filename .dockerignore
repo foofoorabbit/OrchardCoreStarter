@@ -1,0 +1,11 @@
+#ignore all files
+*/*
+bin\
+obj\
+
+
+#except 
+!/InnovationWebsite/*
+!/InnovationWebsiteTheme/*
+!innovation-website.sln
+!nuget.config
