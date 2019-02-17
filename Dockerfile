@@ -11,6 +11,8 @@ FROM microsoft/dotnet:2.2-aspnetcore-runtime
 EXPOSE 80
 
 WORKDIR /app
+COPY ./docker_run.sh ./docker_run.sh
+RUN chmod +x docker_run.sh
 COPY --from=builder /app/Web/.build/release .
 
-ENTRYPOINT ["dotnet", "OrchardCoreStarterWeb.dll"]
+ENTRYPOINT ["./docker_run.sh"]
